@@ -7,4 +7,6 @@ ansible all -i inventory -m ping
 inventory = inventory
 private_key_file = ~/.ssh/id_rsa
 
+#to use any ansible.cfg you can add it to .bashrc
+echo "ANSIBLE_CONFIG=/root/ansible/ansible.cfg" >> ~/.bashrc
 
