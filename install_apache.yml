@@ -2,13 +2,24 @@
 
 - name: first play
   hosts: all
-  become: true
+  gather_facts: yes
   tasks:
+
+  - name: Gather service facts
+    ansible.builtin.service_facts:
+
 
   - name: install apache
     yum:
       name: httpd
       state: present 
+    become: true
+
+  - name: restart if needed
+    ansible.builtin.service:
+      name: httpd
+      state: restarted
+    when: "'httpd.service' in ansible_facts.services"
 
 - name: second play
   hosts: all
