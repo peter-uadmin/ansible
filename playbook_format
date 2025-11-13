@@ -1,0 +1,20 @@
+1.Start with three dashes
+2.name the play
+3.select the hosts
+4.tasks
+    name
+    module
+    parameters
+  
+---
+- name: play1
+  hosts:
+    - one
+    - two
+
+  tasks:
+    -name: t1
+     yum:
+       name: tool1
+       state: present
+
