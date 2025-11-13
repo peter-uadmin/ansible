@@ -1,18 +1,21 @@
+#run this playbook as follows: 
+#ansible-playbook sgrid_create_tenant.yml --extra-vars "tenant_name=<tenantname>"
 ---
 - name: Create NetApp StorageGRID tenant account with username/password
   hosts: localhost
   gather_facts: no
   tasks:
-    - name: Create StorageGRID S3 tenant
+    - name: create 
       netapp.storagegrid.na_sg_grid_account:
         api_url: "https://192.168.4.230:443"  #API endpoint
         auth_token: "e4162885-6bda-4924-945c-af1e6cc602c5"
         validate_certs: false                  #HTTPS certs
         state: present
-        name: "{{ tenant-name }}""              #tenant name (extra-vars)
+        name: "{{ tenant_name }}"              #tenant name (extra-vars)
         protocol: "s3"                         #Default protocol
         use_own_identity_source: false          #own identity source
         allow_platform_services: true          #allow platform services usage
         update_password: on_create             #Enable root password update
         password: "br@@mspun111"
+
 
