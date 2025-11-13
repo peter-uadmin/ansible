@@ -10,3 +10,12 @@ private_key_file = ~/.ssh/id_rsa
 #to use any ansible.cfg you can add it to .bashrc
 echo "ANSIBLE_CONFIG=/root/ansible/ansible.cfg" >> ~/.bashrc
 
+ansible all -m ping
+ansible all --list-hosts
+ansible all -m gather_facts
+ansible all -m gather_facts --limit 192.168.4.191
+
+#if you run as a regular user but have sudo rights...
+ansible all -m yum -a "name=ksh state=present" --become --ask-become-pass
+ansible all -m yum -a "name=ksh state=absent" --become --ask-become-pass
+
