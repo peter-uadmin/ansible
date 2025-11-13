@@ -1,0 +1,41 @@
+---
+- name: Create StorageGRID S3 Tenant Account
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - netapp.storagegrid
+  tasks:
+
+    - name: Get Grid Authorization Token
+      uri:
+        url: "https://192.168.4.230/api/v3/authorize"
+        method: POST
+        body:
+          username: "root"
+          password: "Str@@tl3ngt3!"
+          cookie: false
+          csrfToken: false
+        body_format: json
+        validate_certs: false
+      register: auth
+
+    - name: Create a StorageGRID S3 Tenant Account
+      netapp.storagegrid.na_sg_grid_account:
+        api_url: "https://192.168.4.230"
+        auth_token: "{{ auth.json.data }}"
+        validate_certs: false
+        state: present
+        name: "besttenant"
+        protocol: s3
+        description: "created from playbook"
+        password: "apix1234"
+          #        quota_size: 1000   # Storage quota in GB (optional)
+          # quota_unit: "GB"   # Unit, GB or TB
+        allow_platform_services: true
+        use_own_identity_source: false   # Set true if tenant manages own identity source
+      register: tenant_create_result
+
+    - name: Display Tenant Create Result
+      debug:
+        var: tenant_create_result
+

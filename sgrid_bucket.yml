@@ -1,0 +1,34 @@
+---
+- name: Create S3 Bucket for Tenant
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - netapp.storagegrid
+  tasks:
+
+    - name: Get Tenant Authorization Token
+      uri:
+        url: "https://192.168.4.230:10446/api/v3/authorize"
+        method: POST
+        body:
+          username: "root"
+          password: "Str@@tl3ngt3!"
+          cookie: false
+          csrfToken: false
+        body_format: json
+        validate_certs: false
+      register: tenant_auth
+
+    - name: Create S3 Bucket
+      netapp.storagegrid.na_sg_org_bucket:
+        api_url: "https://192.168.4.230:10446"
+        auth_token: "{{ tenant_auth.json.data }}"
+        validate_certs: false
+        name: "project-data-bucket"
+        state: present
+      register: bucket_create_result
+
+    - name: Display Bucket Create Result
+      debug:
+        var: bucket_create_result
+

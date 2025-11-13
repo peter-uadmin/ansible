@@ -1,0 +1,47 @@
+---
+- name: Retrieve StorageGRID Cluster Information
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - netapp.storagegrid
+  tasks:
+
+    - name: Get Grid Authorization Token
+      uri:
+        url: "https://192.168.4.230/api/v3/authorize"
+        method: POST
+        body:
+          username: "root"
+          password: "Str@@tl3ngt3!"
+          cookie: false
+          csrfToken: false
+        body_format: json
+        validate_certs: false
+      register: auth
+
+    - name: Retrieve List of Tenant Accounts
+      uri:
+        url: "https://192.168.4.230/api/v3/grid/accounts"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ auth.json.data }}"
+        validate_certs: false
+      register: tenants_list
+
+    - name: Display Tenants List
+      debug:
+        var: tenants_list.json.data
+
+    - name: Retrieve System Health Status
+      uri:
+        url: "https://192.168.4.230/api/v3/grid"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ auth.json.data }}"
+        validate_certs: false
+      register: system_status
+
+    - name: Display System Health Status
+      debug:
+        var: system_status.json.data
+

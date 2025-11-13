@@ -1,0 +1,44 @@
+---
+- name: Create StorageGRID HA Group
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - netapp.storagegrid
+  tasks:
+
+    - name: Get Grid Authorization Token
+      uri:
+        url: "https://192.168.4.230/api/v3/authorize"
+        method: POST
+        body:
+          username: root
+          password: Str@@tl3ngt3!
+          cookie: false
+          csrfToken: false
+        body_format: json
+        validate_certs: false
+      register: auth
+
+    - name: Create High Availability Group
+      netapp.storagegrid.na_sg_grid_ha_group:
+        api_url: "https://192.168.4.230"
+        auth_token: "{{ auth.json.data }}"
+        validate_certs: false
+        state: present
+        name: "Site1-HA-Group"
+        description: "HA for Site1 S3 endpoints"
+        gateway_cidr: "192.168.4.1/24"
+        virtual_ips:
+          - "192.168.4.10"
+          - "192.168.4.11"
+        interfaces:
+          - node: "snode2"
+            interface: "eth1"
+          - node: "snode1"
+            interface: "eth1"
+      register: ha_group_result
+
+    - name: Display HA Group Result
+      debug:
+        var: ha_group_result
+
