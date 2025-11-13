@@ -1,0 +1,10 @@
+#pubkey needs to be on other machines.
+#inventory needs to have other machines' ip addresses.
+ansible all -i inventory -m ping
+
+#create an ansible.cfg
+[defaults]
+inventory = inventory
+private_key_file = ~/.ssh/id_rsa
+
+
