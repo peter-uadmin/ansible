@@ -1,0 +1,104 @@
+#a dp volume cannot be created with playbooks
+#so you have to create the dp volume manually
+#vol create -vserver dest_svm -volume dp_volume -size 2g -type dp
+#so you need to run this playbook twice.
+---
+- name: Create source SVM and volumes on cluster cl2
+  hosts: localhost
+  gather_facts: false
+  vars:
+    cl2_hostname: 192.168.4.202
+    cl2_user: admin
+    cl2_pass: apix1234
+    cl2_svm: source_svm
+    cl2_aggr: n1_aggr1
+    cl2_volume: rw_volume
+    cl2_volume_size: 2
+
+  tasks:
+    - name: Create source SVM on cl2
+      netapp.ontap.na_ontap_svm:
+        state: present
+        name: "{{ cl2_svm }}"
+        hostname: "{{ cl2_hostname }}"
+        username: "{{ cl2_user }}"
+        password: "{{ cl2_pass }}"
+        validate_certs: false
+
+    - name: Create read-write volume on source SVM cl2
+      netapp.ontap.na_ontap_volume:
+        state: present
+        name: "{{ cl2_volume }}"
+        aggregate_name: "{{ cl2_aggr }}"
+        size: "{{ cl2_volume_size }}"
+        size_unit: gb
+        junction_path: "/{{ cl2_volume }}"
+        vserver: "{{ cl2_svm }}"
+        #        space_reserve: "none"
+        #style: "flex"
+        state: "present"
+        policy: default
+        hostname: "{{ cl2_hostname }}"
+        username: "{{ cl2_user }}"
+        password: "{{ cl2_pass }}"
+        validate_certs: false
+
+- name: Create destination SVM and DP volume on cluster cl3
+  hosts: localhost
+  gather_facts: false
+  vars:
+    cl3_hostname: 192.168.4.204
+    cl3_user: admin
+    cl3_pass: apix1234 
+    cl3_svm: dest_svm
+    cl3_aggr: n1_aggr1
+
+  tasks:
+    - name: Create destination SVM on cl3
+      netapp.ontap.na_ontap_svm:
+        state: present
+        name: "{{ cl3_svm }}"
+        hostname: "{{ cl3_hostname }}"
+        username: "{{ cl3_user }}"
+        password: "{{ cl3_pass }}"
+        validate_certs: false
+
+- name: Create and initialize SnapMirror relationship
+  hosts: localhost
+  gather_facts: false
+  vars:
+    cl2_hostname: 192.168.4.202
+    cl2_user: admin
+    cl2_pass: apix1234 
+    cl3_hostname: 192.168.4.204 
+    cl3_user: admin
+    cl3_pass: apix1234
+    source_svm: source_svm
+    dest_svm: dest_svm
+    source_volume: rw_volume
+    dest_volume: dp_volume
+
+  tasks:
+    - name: Establish SnapMirror relationship (asynchronous, no vault retention)
+      netapp.ontap.na_ontap_snapmirror:
+        state: present
+        source_path: "{{ source_svm }}:{{ source_volume }}"
+        destination_path: "{{ dest_svm }}:{{ dest_volume }}"
+        hostname: "{{ cl3_hostname }}"
+        schedule: "monthly"
+        policy: "Asynchronous"
+        hostname: "{{ cl3_hostname }}"
+        username: "{{ cl3_user }}"
+        password: "{{ cl3_pass }}"
+        validate_certs: false
+
+    - name: Initialize SnapMirror relationship
+      netapp.ontap.na_ontap_snapmirror:
+        initialize: true 
+        source_path: "{{ source_svm }}:{{ source_volume }}"
+        destination_path: "{{ dest_svm }}:{{ dest_volume }}"
+        hostname: "{{ cl3_hostname }}"
+        username: "{{ cl3_user }}"
+        password: "{{ cl3_pass }}"
+        validate_certs: false
+

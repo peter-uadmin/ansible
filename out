@@ -1,0 +1,242 @@
+
+PLAY [List StorageGRID tenants] ************************************************
+
+TASK [Get list of tenants from StorageGRID] ************************************
+ok: [localhost]
+
+TASK [Display tenants JSON] ****************************************************
+ok: [localhost] => {
+    "tenant_response.json": {
+        "apiVersion": "3.6",
+        "data": [
+            {
+                "capabilities": [
+                    "management",
+                    "s3"
+                ],
+                "description": "cloud tier destination",
+                "id": "39259058602365735298",
+                "name": "cloudtenant",
+                "policy": {
+                    "allowPlatformServices": false,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": false
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "s3",
+                    "management"
+                ],
+                "description": null,
+                "id": "99205189416869587065",
+                "name": "test1",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": false
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "management",
+                    "s3"
+                ],
+                "description": null,
+                "id": "57738659595142343271",
+                "name": "awscli",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": true,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": false
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "s3",
+                    "management"
+                ],
+                "description": null,
+                "id": "94932957322081922021",
+                "name": "another",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": true
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "s3",
+                    "management"
+                ],
+                "description": null,
+                "id": "62020102624523959205",
+                "name": "fixedpass",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": true
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "management",
+                    "s3"
+                ],
+                "description": "home",
+                "id": "63108339395493974373",
+                "name": "groningen",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": true,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": false
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "management",
+                    "s3"
+                ],
+                "description": null,
+                "id": "01985521594013193079",
+                "name": "customerone",
+                "policy": {
+                    "allowPlatformServices": false,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": false
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "management",
+                    "s3"
+                ],
+                "description": null,
+                "id": "74769970440300100598",
+                "name": "newten",
+                "policy": {
+                    "allowPlatformServices": false,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": false
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "management",
+                    "s3"
+                ],
+                "description": "maasland",
+                "id": "68500977170016623393",
+                "name": "maasland",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": 10000000000,
+                    "useAccountIdentitySource": false
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "s3",
+                    "management"
+                ],
+                "description": null,
+                "id": "47813533124548309746",
+                "name": "mytenant",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": true
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "s3",
+                    "management"
+                ],
+                "description": null,
+                "id": "65876533502320351608",
+                "name": "myten",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": false
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "s3",
+                    "management"
+                ],
+                "description": null,
+                "id": "84563512720377473538",
+                "name": "root",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": false,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": true
+                },
+                "synchronizeRules": {}
+            },
+            {
+                "capabilities": [
+                    "management",
+                    "s3"
+                ],
+                "description": null,
+                "id": "56399859118387518317",
+                "name": "testtenant",
+                "policy": {
+                    "allowPlatformServices": true,
+                    "allowSelectObjectContent": true,
+                    "allowedGridFederationConnections": [],
+                    "quotaObjectBytes": null,
+                    "useAccountIdentitySource": true
+                },
+                "synchronizeRules": {}
+            }
+        ],
+        "deprecated": true,
+        "responseTime": "2025-11-13T11:42:43.146Z",
+        "status": "success"
+    }
+}
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

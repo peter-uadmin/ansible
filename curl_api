@@ -1,0 +1,40 @@
+curl --request GET "https://192.168.4.202/api/cluster?fields=version" --user admin:apix1234 -k | grep name
+curl --request GET "https://192.168.4.202/api/storage/volumes" --user admin:apix1234 -k | grep name
+curl --request GET "https://192.168.4.202/api/storage/aggregates" --user admin:apix1234 -k | grep name
+curl --insecure --user admin:apix1234 https://cl2/api/svm/svms | grep name
+
+#filter fields with jq
+#first list the full tree.
+curl --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/bef883b6-1ebe-11f0-ad10-000c29ffcf6b/" | jq '.'
+#then filter desired fields
+curl --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/bef883b6-1ebe-11f0-ad10-000c29ffcf6b/" | jq '{name: .name, ip: .ip.address,port: .location.port.name, home: .location.home_port.name, svm: .svm.name }'
+
+#to get all ports...
+#gather uuids
+curl --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/" |grep uuid|awk -F: '{print $2}'|sed 's/"//g'|sed 's/,//'>uuids
+
+#then loop
+ for i in `cat uuids` 
+do  
+ curl -s --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/$i/" | jq '{name: .name, ip: .ip.address,port: .location.port.name, home: .location.home_port.name, svm: .svm.name }'
+done
+
+#create a volume
+curl -k -X POST -u admin:apix1234 "https://192.168.4.202/api/storage/volumes" \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+  "aggregates": [{"name": "n1_aggr1"}],
+  "svm": {"name": "svm1"},
+  "name": "apivol",
+  "size": 1073741840,
+  "nas": {
+    "security_style": "unix",
+    "path": "/apimount"
+  }
+}'
+
+#delete a volume
+curl -k -X DELETE -u admin:apix1234 "https://192.168.4.202/api/storage/volumes/5b589279-bf1e-11f0-ad10-000c29ffcf6b" \
+-H "accept: application/json"
+

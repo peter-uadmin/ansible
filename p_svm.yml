@@ -1,0 +1,22 @@
+#run this playbook as follows:
+#ansible-playbook p_svm.yml --extra-vars "svm_name=<svmname>"
+---
+- name: Create NetApp ONTAP Storage Virtual Machine (SVM)
+  hosts: localhost
+  gather_facts: false
+  #  vars:
+  #  hostname: "{{ cl2 }}"
+  #  username: "{{ admin }}"
+  #  password: "{{ pass }}"
+  vars_files:
+    - p_vars.yml
+  tasks:
+    - name: Create SVM named svmone with root volume on n1_aggr1
+      netapp.ontap.na_ontap_svm:
+        state: present
+        name: "{{ svm_name }}" 
+        hostname: "{{ cl2 }}"
+        username: "{{ admin }}"
+        password: "{{ pass }}"
+        validate_certs: false
+
