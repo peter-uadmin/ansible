@@ -1,10 +1,21 @@
 ---
 
-- hosts: all
+- name: first play
+  hosts: all
   become: true
   tasks:
 
   - name: install apache
     yum:
       name: httpd
-      state: absent
+      state: present 
+
+- name: second play
+  hosts: all
+  tasks:
+
+  - name: install ksh
+    yum:
+      name: ksh
+      state: present 
+
