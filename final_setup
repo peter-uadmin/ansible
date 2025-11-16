@@ -1,0 +1,12 @@
+dnf install -y python3.11-pip
+pip3.11 install netapp-lib
+pip3.11 install oslo_log
+chmod -R +x /root/.ansible/collections
+git clone https://github.com/NetApp-Learning-Services/STRSW-ILT-RSTAN ansible-workshop  
+yum install epel-release
+yum install jq
+        
+dnf install -y ansible-core
+ansible-galaxy collection install netapp.ontap
+
+ansible-galaxy collection list netapp.ontap 

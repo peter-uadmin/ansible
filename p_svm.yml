@@ -14,9 +14,9 @@
     - name: Create SVM named svmone with root volume on n1_aggr1
       netapp.ontap.na_ontap_svm:
         state: present
-        name: "{{ svm_name }}" 
+        name: "{{ svm_name }}"
         hostname: "{{ cl2 }}"
-        username: "{{ admin }}"
-        password: "{{ pass }}"
+        username: "{{ cl2_admin }}"
+        password: "{{ cl2_pass }}"
         validate_certs: false
 

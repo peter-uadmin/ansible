@@ -1,40 +1,65 @@
+#some examples with grep------
 curl --request GET "https://192.168.4.202/api/cluster?fields=version" --user admin:apix1234 -k | grep name
 curl --request GET "https://192.168.4.202/api/storage/volumes" --user admin:apix1234 -k | grep name
 curl --request GET "https://192.168.4.202/api/storage/aggregates" --user admin:apix1234 -k | grep name
 curl --insecure --user admin:apix1234 https://cl2/api/svm/svms | grep name
 
-#filter fields with jq
-#first list the full tree.
-curl --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/bef883b6-1ebe-11f0-ad10-000c29ffcf6b/" | jq '.'
+#instead of grep us jq.-------
+(jq lists a "records" array.)
+curl --request GET "https://cl2/api/network/ethernet/ports?fields=uuid,name,type" -H "accept: application/hal+json" --user admin:apix1234 -k|jq -r '.records[].name'
+
+#filter fields with jq---------
+#interfaces
+#list interfaces 
+curl --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/" | jq '.'
+#list the names of the interfaces only
+curl --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/" | jq  -r '.records[].name'
+#------------------------------
+
+#-----svms----------
+#list svms by name
+curl --insecure --user admin:apix1234 https://cl2/api/svm/svms | jq -r '.records[].name'
+#-------------------
+
+#----volumes and sizes-----
+#listing volumes and sizes
+#list volumes and copy the uuid. (eg: 0b08dca0-c261-11f0-90c6-000c29aa4d0c)
+curl --insecure --user admin:apix1234 https://cl2/api/storage/volumes|jq  '.records[].name'
+#then list the size of that uuid.
+curl --insecure --user admin:apix1234 https://cl2/api/storage/volumes/0b08dca0-c261-11f0-90c6-000c29aa4d0c/|jq  '{size: .size'}
+
 #then filter desired fields
 curl --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/bef883b6-1ebe-11f0-ad10-000c29ffcf6b/" | jq '{name: .name, ip: .ip.address,port: .location.port.name, home: .location.home_port.name, svm: .svm.name }'
+#--------------------------
 
+#-----ports----------
 #to get all ports...
-#gather uuids
+#gather uuids in a file
 curl --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/" |grep uuid|awk -F: '{print $2}'|sed 's/"//g'|sed 's/,//'>uuids
 
 #then loop
- for i in `cat uuids` 
+for i in `cat uuids` 
 do  
  curl -s --insecure --user admin:apix1234 "https://cl2/api/network/ip/interfaces/$i/" | jq '{name: .name, ip: .ip.address,port: .location.port.name, home: .location.home_port.name, svm: .svm.name }'
 done
+#---------------------
 
-#create a volume
-curl -k -X POST -u admin:apix1234 "https://192.168.4.202/api/storage/volumes" \
--H "accept: application/json" \
--H "Content-Type: application/json" \
--d '{
-  "aggregates": [{"name": "n1_aggr1"}],
-  "svm": {"name": "svm1"},
-  "name": "apivol",
-  "size": 1073741840,
-  "nas": {
-    "security_style": "unix",
-    "path": "/apimount"
-  }
+----volume example----
+#create a volume, get its uuid and delete the volume
+
+#create
+curl -k -X POST -u admin:apix1234 "https://cl2/api/storage/volumes" -H "Content-Type: application/json" -d '{
+  "name": "s_volume",
+  "svm": {"name": "cl2_svm2"},
+  "size": "100mb",
+  "aggregates": [ {"name": "n1_aggr1"} ]
 }'
 
-#delete a volume
-curl -k -X DELETE -u admin:apix1234 "https://192.168.4.202/api/storage/volumes/5b589279-bf1e-11f0-ad10-000c29ffcf6b" \
--H "accept: application/json"
+#get the uid of the volume to delete.
+curl --insecure --user admin:apix1234 https://cl2/api/storage/volumes|jq  .
 
+Let's say the uuid of the s_volume is "4fd1c281-c29e-11f0-90c6-000c29aa4d0c"
+
+#delete a volume
+curl -k -X DELETE -u admin:apix1234 "https://192.168.4.202/api/storage/volumes/4fd1c281-c29e-11f0-90c6-000c29aa4d0c" -H "accept: application/json"
+#----------------------

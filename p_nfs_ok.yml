@@ -1,0 +1,94 @@
+---
+- name: Setup ONTAP SVM with NFS LIF and export policy using HTTPS and admin login
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - netapp.ontap
+
+  vars:
+    hostname: "192.168.4.202"
+    username: "admin"
+    password: "apix1234"
+    https: true
+    validate_certs: false  # Set to true if ONTAP cluster uses trusted certs
+
+    svm_name: svm_nfs_example
+    lif_name: nfs_lif1
+    lif_home_node: "cl2_01"
+    lif_home_port: "e0c"
+    lif_address: "192.168.4.144"
+    lif_netmask: 24
+    lif_service_policy: "default-data-files"
+
+    export_policy_name: "nfs_export_policy"
+    export_policy_rule_index: 1
+    export_policy_client_match: "192.168.4.0/24"
+    export_policy_protocol: "nfs"
+    export_policy_ro_rule: "any"
+    export_policy_rw_rule: "any"
+    export_policy_superuser: "any"
+
+  tasks:
+  - name: Create SVM with NFS protocol enabled
+    na_ontap_svm:
+      hostname: "{{ hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      https: "{{ https }}"
+      validate_certs: "{{ validate_certs }}"
+      name: "{{ svm_name }}"
+      state: present
+      allowed_protocols:
+        - nfs
+    delegate_to: localhost
+
+  - name: Create NFS LIF for the SVM
+    na_ontap_interface:
+      hostname: "{{ hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      https: "{{ https }}"
+      validate_certs: "{{ validate_certs }}"
+      vserver: "{{ svm_name }}"
+      interface_name: "{{ lif_name }}"
+      home_node: "{{ lif_home_node }}"
+      home_port: "{{ lif_home_port }}"
+      address: "{{ lif_address }}"
+      netmask: "{{ lif_netmask }}"
+      service_policy: "{{ lif_service_policy }}"
+      protocols:
+        - nfs
+      state: present
+    delegate_to: localhost
+
+  - name: Create export policy for NFS
+    na_ontap_export_policy:
+      hostname: "{{ hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      https: "{{ https }}"
+      validate_certs: "{{ validate_certs }}"
+      vserver: "{{ svm_name }}"
+      name: "{{ export_policy_name }}"
+      state: present
+    delegate_to: localhost
+
+  - name: Add rule to export policy
+    na_ontap_export_policy_rule:
+      hostname: "{{ hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      https: "{{ https }}"
+      validate_certs: "{{ validate_certs }}"
+      vserver: "{{ svm_name }}"
+      policy_name: "{{ export_policy_name }}"
+      name: "rule-{{ export_policy_rule_index }}"
+      rule_index: "{{ export_policy_rule_index }}"
+      client_match: "{{ export_policy_client_match }}"
+      protocol: "{{ export_policy_protocol }}"
+      ro_rule: "{{ export_policy_ro_rule }}"
+      rw_rule: "{{ export_policy_rw_rule }}"
+      super_user_security: "{{ export_policy_superuser }}"
+      state: present
+    delegate_to: localhost
+

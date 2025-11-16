@@ -1,10 +1,9 @@
-
 cl2: 192.168.4.202
-admin: admin
-pass: apix1234
+cl2_admin: admin
+cl2_pass: apix1234
 
 cl3: 192.168.4.204
-admin: admin
-pass: apix1234
+cl3_admin: admin
+cl3_pass: apix1234
 
 
